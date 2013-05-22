@@ -1,0 +1,28 @@
+
+# autojump
+autoload -U compinit; compinit
+[[ -s ~/.autojump/etc/profile.d/autojump.zsh ]] && . ~/.autojump/etc/profile.d/autojump.zsh
+compinit
+
+# git settings
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' formats '(%s)-[%b]'
+zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
+precmd () {
+    psvar=()
+    LANG=en_US.UTF-8 vcs_info
+    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+}
+RPROMPT="%1(v|%F{green}%1v%f|)"
+
+autoload bashcompinit
+bashcompinit
+if [ -e ./git-completion.bash ]; then
+    source ./git-completion.bash
+elif [ -e /usr/local/git/contrib/completion/git-completion.bash ]; then
+    source /usr/local/git/contrib/completion/git-completion.bash
+fi
+# GIT_PS1_SHOWDIRTYSTATE=true
+
+
+

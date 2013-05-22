@@ -92,23 +92,6 @@ setopt hist_ignore_dups     # ignore duplication command history list
 setopt share_history        # share command history data
 
 
-## Completion configuration
-#
-fpath=(${HOME}/.zsh/functions/Completion ${fpath})
-autoload -U compinit
-compinit
-
-
-## zsh editor
-#
-autoload zed
-
-
-## Prediction configuration
-#
-#autoload predict-on
-#predict-off
-
 
 ## Alias configuration
 #
@@ -117,7 +100,6 @@ autoload zed
 setopt complete_aliases     # aliased ls needs if file/dir completions work
 
 alias where="command -v"
-alias j="jobs -l"
 
 case "${OSTYPE}" in
 freebsd*|darwin*)
@@ -184,29 +166,8 @@ xterm|xterm-color|kterm|kterm-color)
     ;;
 esac
 
-# git settings
-autoload -Uz vcs_info
-zstyle ':vcs_info:*' formats '(%s)-[%b]'
-zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
-precmd () {
-    psvar=()
-    LANG=en_US.UTF-8 vcs_info
-    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
-}
-RPROMPT="%1(v|%F{green}%1v%f|)"
-
-autoload bashcompinit
-bashcompinit
-if [ -e ./git-completion.bash ]; then
-    source ./git-completion.bash
-elif [ -e /usr/local/git/contrib/completion/git-completion.bash ]; then
-    source /usr/local/git/contrib/completion/git-completion.bash
-fi
-# GIT_PS1_SHOWDIRTYSTATE=true
-
-
-
-
 ## load user .zshrc configuration file
 #
 [ -f ${HOME}/.zshrc.mine ] && source ${HOME}/.zshrc.mine
+
+
