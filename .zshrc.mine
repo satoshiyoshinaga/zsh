@@ -1,3 +1,4 @@
+umask 007
 
 # autojump
 autoload -U compinit; compinit
