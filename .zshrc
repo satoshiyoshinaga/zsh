@@ -20,7 +20,7 @@ autoload colors
 colors
 case ${UID} in
 0)
-    PROMPT="%{${fg[cyan]}%}$(echo ${HOST%%.*} | tr '[a-z]' '[A-Z]') %B%{${fg[red]}%}%/#%{${reset_color}%}%b "
+    PROMPT="%{${fg[cyan]}%}$(echo ${HOST}) %B%{${fg[red]}%}%/#%{${reset_color}%}%b "
     PROMPT2="%B%{${fg[red]}%}%_#%{${reset_color}%}%b "
     SPROMPT="%B%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}%b "
     ;;
@@ -29,7 +29,7 @@ case ${UID} in
     PROMPT2="%{${fg[red]}%}%_%%%{${reset_color}%} "
     SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%} "
     [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] && 
-        PROMPT="%{${fg[cyan]}%}$(echo ${HOST%%.*} | tr '[a-z]' '[A-Z]') ${PROMPT}"
+        PROMPT="%{${fg[cyan]}%}$(echo ${HOST}) ${PROMPT}"
     ;;
 esac
 
@@ -179,7 +179,7 @@ esac
 case "${TERM}" in
 xterm|xterm-color|kterm|kterm-color)
     precmd() {
-        echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
+        echo -ne "\033]0;${USER}@${HOST}:${PWD}\007"
     }
     ;;
 esac
@@ -210,3 +210,4 @@ fi
 ## load user .zshrc configuration file
 #
 [ -f ${HOME}/.zshrc.mine ] && source ${HOME}/.zshrc.mine
+umask 007
