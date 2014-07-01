@@ -180,17 +180,6 @@ precmd () {
 }
 RPROMPT="%1(v|%F{green}%1v%f|)"
 
-autoload bashcompinit
-bashcompinit
-if [ -e ./git-completion.bash ]; then
-    source ./git-completion.bash
-elif [ -e /usr/local/git/contrib/completion/git-completion.bash ]; then
-    source /usr/local/git/contrib/completion/git-completion.bash
-fi
-# GIT_PS1_SHOWDIRTYSTATE=true
-
-
-
 function do_enter() {
     if [ -n "$BUFFER" ]; then
         zle accept-line
