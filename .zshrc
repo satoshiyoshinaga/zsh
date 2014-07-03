@@ -200,6 +200,45 @@ function do_enter() {
 zle -N do_enter
 bindkey '^m' do_enter
 
+
+setopt extended_glob
+
+typeset -A abbreviations
+abbreviations=(
+    "G"    "| grep"
+    "P"    "| percol"
+    "PY"    "| python -c"
+    "X"    "| xargs"
+    "T"    "| tail"
+    "C"    "| cat"
+    "W"    "| wc"
+    "A"    "| awk"
+    "S"    "| sed"
+    "E"    "2>&1 > /dev/null"
+    "N"    "> /dev/null"
+)
+
+magic-abbrev-expand() {
+    local MATCH
+    LBUFFER=${LBUFFER%%(#m)[-_a-zA-Z0-9]#}
+    LBUFFER+=${abbreviations[$MATCH]:-$MATCH}
+    zle self-insert
+
+}
+
+no-magic-abbrev-expand() {
+    LBUFFER+=' '
+
+}
+
+zle -N magic-abbrev-expand
+zle -N no-magic-abbrev-expand
+bindkey " " magic-abbrev-expand
+bindkey "^x " no-magic-abbrev-expand
+
+
+
+
 # load user .zshrc configuration file
 #
 [ -f ${HOME}/.zshrc.mine ] && source ${HOME}/.zshrc.mine
