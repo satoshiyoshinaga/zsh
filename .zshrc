@@ -200,7 +200,7 @@ function do_enter() {
 zle -N do_enter
 bindkey '^m' do_enter
 
-
+## 入力補完
 setopt extended_glob
 
 typeset -A abbreviations
@@ -236,6 +236,20 @@ zle -N no-magic-abbrev-expand
 bindkey " " magic-abbrev-expand
 bindkey "^x " no-magic-abbrev-expand
 
+## cdr
+autoload -Uz compinit && compinit
+
+zstyle ':completion:*' menu select
+zstyle ':completion:*:cd:*' ignore-parents parent pwd
+zstyle ':completion:*:descriptions' format '%BCompleting%b %U%d%u'
+
+typeset -ga chpwd_functions
+
+autoload -U chpwd_recent_dirs cdr
+chpwd_functions+=chpwd_recent_dirs
+zstyle ":chpwd:*" recent-dirs-max 500
+zstyle ":chpwd:*" recent-dirs-default true
+zstyle ":completion:*" recent-dirs-insert always
 
 
 
