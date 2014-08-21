@@ -11,6 +11,10 @@ case ${UID} in
     ;;
 esac
 
+#
+# PATH
+#
+export PATH=/usr/local/bin:$PATH
 
 ## Default shell configuration
 #
