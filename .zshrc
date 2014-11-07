@@ -307,12 +307,18 @@ if exists percol; then
     bindkey '^@' percol-cdr
 
     function percol-ec2-ssh() {
-        local selected_ec2=$(aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].[Tags[?Key==`Name`].Value[],PublicIpAddress]' \
-            --output=text \
-            --filters "Name=instance-state-code,Values=16" |
+        if [ -e /tmp/awsinst ]; then
+            echo 'using /tmp/awsinst ...'
+        else
+            echo 'fetch aws ec2 info ...'
+            aws ec2 describe-instances \
+                --query 'Reservations[*].Instances[*].[Tags[?Key==`Name`].Value[],PublicIpAddress]' \
+                --output=text \
+                --filters "Name=instance-state-code,Values=16" |
             awk '{ if(NR % 2 == 1){ printf $0; printf "\t" }else{ print } }' |
-            percol | cut -f 1)
+            >/tmp/awsinst
+        fi
+        local selected_ec2=$(cat /tmp/awsinst | percol | cut -f 1)
         if [ -n "$selected_ec2" ]; then
             BUFFER="ssh -A ${selected_ec2}"
             zle accept-line
