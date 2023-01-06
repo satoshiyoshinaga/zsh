@@ -210,7 +210,7 @@ setopt extended_glob
 typeset -A abbreviations
 abbreviations=(
     "G"    "| grep"
-    "P"    "| percol"
+    "P"    "| peco"
     "PY"    "| python -c"
     "X"    "| xargs"
     "T"    "| tail"
@@ -255,7 +255,7 @@ zstyle ":chpwd:*" recent-dirs-max 500
 zstyle ":chpwd:*" recent-dirs-default true
 zstyle ":completion:*" recent-dirs-insert always
 
-## percol
+## peco
 ##
 fpath=(~/.zsh/completion $fpath)
 
@@ -264,11 +264,11 @@ compinit -u
 
 function ppgrep() {
     if [[ $1 == "" ]]; then
-        PERCOL=percol
+        PECO=peco
     else
-        PERCOL="percol --query $1"
+        PECO="peco --query $1"
     fi
-    ps aux | eval $PERCOL | awk '{ print $2 }'
+    ps aux | eval $PECO | awk '{ print $2 }'
 }
 
 function ppkill() {
@@ -283,50 +283,28 @@ function ppkill() {
 
 function exists { which $1 &> /dev/null }
 
-if exists percol; then
-    function percol_select_history() {
+if exists peco; then
+    function peco_select_history() {
         local tac
         exists gtac && tac="gtac" || { exists tac && tac="tac" || { tac="tail -r" } }
-        BUFFER=$(fc -l -n 1 | eval $tac | percol --query "$LBUFFER")
+        BUFFER=$(fc -l -n 1 | eval $tac | peco --query "$LBUFFER")
         CURSOR=$#BUFFER         # move cursor
         zle -R -c               # refresh
     }
 
-    zle -N percol_select_history
-    bindkey '^R' percol_select_history
+    zle -N peco_select_history
+    bindkey '^R' peco_select_history
 
-    function percol-cdr () {
-        local selected_dir=$(cdr -l | awk '{ print $2 }' | percol)
+    function peco-cdr () {
+        local selected_dir=$(cdr -l | awk '{ print $2 }' | peco)
         if [ -n "$selected_dir" ]; then
             BUFFER="cd ${selected_dir}"
             zle accept-line
         fi
         zle clear-screen
     }
-    zle -N percol-cdr
-    bindkey '^@' percol-cdr
-
-    function percol-ec2-ssh() {
-        if [ -e /tmp/awsinst ]; then
-            echo 'using /tmp/awsinst ...'
-        else
-            echo 'fetch aws ec2 info ...'
-            aws ec2 describe-instances \
-                --query 'Reservations[*].Instances[*].[Tags[?Key==`Name`].Value[],PublicIpAddress]' \
-                --output=text \
-                --filters "Name=instance-state-code,Values=16" |
-            awk '{ if(NR % 2 == 1){ printf $0; printf "\t" }else{ print } }' |
-            >/tmp/awsinst
-        fi
-        local selected_ec2=$(cat /tmp/awsinst | percol | cut -f 1)
-        if [ -n "$selected_ec2" ]; then
-            BUFFER="ssh -A ${selected_ec2}"
-            zle accept-line
-        fi
-        zle clear-screen
-    }
-    zle -N percol-ec2-ssh
-    bindkey '^]' percol-ec2-ssh
+    zle -N peco-cdr
+    bindkey '^@' peco-cdr
 fi
 
 
